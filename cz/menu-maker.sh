@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# ip address
-# use first arg or contents of file '/ftp/ip'
+# ip address: use first arg or read from ../config
 config_ip=$(awk -F'[[:space:]]*=[[:space:]]*' '$1 == "IP" {print $2}' ../config)
 ip=${1:-$config_ip}
 

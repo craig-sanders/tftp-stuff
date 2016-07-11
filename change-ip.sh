@@ -13,8 +13,10 @@ else
 fi
 
 # IP address
-# $2 = ip address.  if NUL, use contents of file 'ip' in current dir.
-ip=${2:-$(cat ip)}
+# use second arg or read from ./config
+config_ip=$(awk -F'[[:space:]]*=[[:space:]]*' '$1 == "IP" {print $2}' ../config)
+ip=${2:-$config_ip}
+
 
 [ -z "$ip" ] && echo "IP address required!" && exit 1
 

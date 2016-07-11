@@ -10,6 +10,5 @@ dist=${1:-stable}
 arch=${2:-amd64}
 
 echo wget -q --show-progress -O "netboot-$dist-$arch.tar.gz" "$base_url/dists/$dist/main/installer-$arch/current/images/netboot/netboot.tar.gz"
-#wget -q --show-progress -O "netboot-$dist-$arch.tar.gz" "$base_url/dists/$dist/main/installer-$arch/current/images/netboot/netboot.tar.gz"
-wget  -O "netboot-$dist-$arch.tar.gz" "$base_url/dists/$dist/main/installer-$arch/current/images/netboot/netboot.tar.gz"
+wget -q --show-progress -O "netboot-$dist-$arch.tar.gz" "$base_url/dists/$dist/main/installer-$arch/current/images/netboot/netboot.tar.gz"
 
