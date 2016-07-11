@@ -2,9 +2,9 @@
 
 ## Scripts to maintain menus for netbootable:
 
- - Clonezilla (./cz/)
- - GParted (./gp/)
- - Debian Installer (./di/)
+ - Clonezilla (cz/)
+ - GParted (gp/)
+ - Debian Installer (di/)
 
  - auto-download and unpack images for all of the above.
 
