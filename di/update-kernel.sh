@@ -1,0 +1,1 @@
+../cz/update-kernel.sh

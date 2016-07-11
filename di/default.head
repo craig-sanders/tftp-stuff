@@ -1,0 +1,9 @@
+
+PROMPT 0
+TIMEOUT 120
+MENUROWS 16
+
+MENU TITLE Debian Installer Menu
+MENU COLOR disabled 1;33;44
+
+

@@ -1,0 +1,23 @@
+# How to update a kernel for a debian installer
+
+Feb 11 2012
+
+cd /tftp/di/sid/amd64
+mkdir orig
+mv linux initrd.gz orig
+
+cp -af /boot/vmlinuz-3.2.0-1-amd64 ./linux
+
+mkdir initrd
+cd initrd
+zcat ../orig/initrd.gz | cpio -i --no-absolute-filenames 
+
+cp -af /lib/modules/3.2.0-1-amd64/ lib/modules/
+cp -af /lib/firmware/ lib/
+
+find . | cpio -o -H newc | gzip -c > ../initrd.gz
+
+
+
+# added Mar 26 2012
+# more details and ideas at http://wiki.debian.org/DebianInstaller/NetbootFirmware

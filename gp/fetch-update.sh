@@ -1,0 +1,1 @@
+../cz/fetch-update.sh

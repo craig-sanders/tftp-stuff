@@ -1,0 +1,107 @@
+#!/bin/bash
+
+exec 3>&1 4>&2 1>& >(tee /tmp/custom-ocs-2.log) 2>&1
+#set -x
+
+# this script is downloaded by clonezilla live and executed.
+#
+# CAS 2010-02-26
+#
+# based on example seen at:
+# http://clonezilla.org/clonezilla-live/doc/fine-print.php?path=./07_Customized_script_with_PXE/00_customized_script_with_PXE.doc
+#
+# http://clonezilla.org/clonezilla-live/doc/07_Customized_script_with_PXE/00_customized_script_with_PXE.doc
+
+# set LANG
+export LANG=en_AU.UTF-8
+
+# these function files live in different places for different versions
+# of clonezilla.  this hack attempts to source them from wherever they
+# are.
+declare -a ffiles
+ffiles=(/opt/drbl/sbin/drbl-conf-functions
+        /opt/drbl/sbin/ocs-functions
+        /usr/share/drbl/sbin/drbl-conf-functions
+        /etc/drbl/drbl-ocs.conf
+        /usr/share/drbl/sbin/ocs-functions
+        /etc/ocs/ocs-live.conf
+       )
+for f in "${ffiles[@]}" ; do
+  [ -f "$f" ] && . "$f"
+done
+
+# defaults
+
+# assume BOOTSERVER and every other server is the gateway address
+# change variables to suit your network.
+BOOTSERVER=$(netstat -rnt | awk '/0.0.0.0/ { print $2 ; exit}')
+
+SMBHOST="$BOOTSERVER"
+SMBUSER='zilla'
+SMBSHARE=zilla
+
+baseurl="http://$BOOTSERVER/tftp/cz/extras"
+
+# set proxy.
+PROXY="$BOOTSERVER"
+PROXYPORT="3128"
+if [ -n "$PROXY" ] && [ -n "$PROXYPORT" ] ; then
+  export http_proxy="http://$PROXY:$PROXYPORT/"
+  export https_proxy="http://$PROXY:$PROXYPORT/"
+  export ftp_proxy="http://$PROXY:$PROXYPORT/"
+fi
+
+# fetch cz.add.list and, if not empty, replaces sources.list files with
+# preferred (local) mirror
+wget -q -O /tmp/cz.add.list "$baseurl/cz.add.list" 
+if [ -s "/tmp/cz.add.list" ] ; then
+  sudo sed -i -e 's/^/#/' /etc/apt/sources.list.d/* /etc/apt/sources.list
+  sudo cp -f /tmp/cz.add.list /etc/apt/sources.list.d/
+fi
+
+# download ssh keys and install if not empty
+wget -q -O /tmp/cz.ssh.keys "$baseurl/cz.ssh.keys"
+
+if [ -s "/tmp/cz.ssh.keys" ] ; then
+  sudo mkdir -p /root/.ssh /home/user/.ssh
+  sudo cp /tmp/cz.ssh.keys /root/.ssh/authorized_keys
+  sudo cp /tmp/cz.ssh.keys /home/user/.ssh/authorized_keys
+  sudo chown -R root:root /root/.ssh
+  sudo chown -R user:user /home/user/.ssh
+  sudo chmod 700 /root/.ssh /home/user/.ssh
+  sudo chmod 600 /root/.ssh/authorized_keys /home/user/.ssh/authorized_keys
+fi
+
+# fetch these files and add their contents to /etc/profile and
+# /etc/bash.bashrc set up env vars, aliases, functions etc.
+for f in "cz.profile.add" "bash.aliases" ; do
+  wget -q -O "/tmp/$f" "$baseurl/$f"
+  if [ -s "$f" ] ; then
+    sudo /bin/sh -c "cat '$f' >> /etc/profile"
+    sudo /bin/sh -c "cat '$f' >> /etc/bash.bashrc"
+    sudo /bin/sh -c "cat '$f' >> /home/user/.bashrc"
+  fi
+done
+
+# get rid of the annoying clear screen in the .bash_profile and .bash_logout
+sed -i -e 's/^/#/' /home/user/.bash_logout
+sed -i -e 's/^clear/#&/' /home/user/.bash_profile
+
+# clear motd
+sudo echo > /etc/motd
+
+if [ -n "$(type -p mount.cifs)" ] ; then
+  echo -n "Login [$SMBUSER]: "
+  read user
+  [ -z "$user" ] && user="$SMBUSER"
+  read -n "Password: " pass
+
+  sudo mount.cifs "\\\\$SMBHOST\\$SMBSHARE" /home/partimag -o user="$user",pass="$SMBPASS"
+fi
+
+[ -d "/opt/drbl/" ] && export PATH="/opt/drbl/sbin:/opt/drbl/bin:$PATH"
+
+set +x
+exec 1>&3 2>&4
+sudo ocs-live -s
+

@@ -1,0 +1,10 @@
+
+PROMPT 0
+TIMEOUT 120
+MENUROWS 16
+
+MENU TITLE Clonezilla Menu
+MENU COLOR disabled 1;33;44
+
+# for info on the usercrypted passwd see http://clonezilla.org/clonezilla-live/doc/05_Started_with_sshd_on_and_passwd_assigned/
+

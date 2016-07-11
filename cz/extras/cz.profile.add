@@ -1,0 +1,10 @@
+
+LANG=en_AU.UTF-8
+export LANG
+
+alias prepare-chroot-mnt='for i in proc dev sys dev/pts ; do mount -o bind /$i /mnt/$i ; done'
+alias prepare-chroot-target='for i in proc dev sys dev/pts ; do mount -o bind /$i /target/$i ; done'
+
+alias l='ls -l'
+alias dir='ls -lF'
+

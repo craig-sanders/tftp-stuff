@@ -1,0 +1,19 @@
+###
+### Configuration file for tftp automation system
+###
+### comments and blank lines ignored
+### whitespace allowed around `=` (but not in variable names or values)
+
+# IP address for tftp/http requests (menus, kernels, initrds etc)
+IP=192.168.0.1
+
+# BASE URL for sourceforge (gparted and clonezilla images)
+# used by the gp and cz fetch-update.sh script.
+#
+# choose your closest/favourite mirror or let sourceforge choose for
+# you.
+SOURCEFORGE=http://downloads.sourceforge.net/
+
+# BASE URL for nearest/favourite debian mirror.
+# used to download installer netboot images
+DEBIAN=http://ftp.debian.org/debian/
