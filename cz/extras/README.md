@@ -1,3 +1,5 @@
+# extras/
+
 This directory contains files that **MUST** be available to both the
 tftpd and the httpd.
 
@@ -8,21 +10,22 @@ or private keys because they will be accessible by any machine on the
 network that has access to the tftp server or the /tftp/ directory in
 the httpd config.
 
-# custom-ocs-2
+---
 
- - custom setup for clonezilla. also downloads and makes use of the
-following files:
+ - `custom-ocs-2`
 
-# bash.aliases
+ custom setup for clonezilla. also downloads and makes use of the following files:
 
- - useful aliases added to the shell
+ - `bash.aliases`
 
-# cz.profile.add
+ useful aliases added to the shell
 
- - added to the shell's various profile files
+ - `cz.profile.add`
 
-# cz.ssh.keys
+ added to the shell's various profile files
 
- - ssh keys that are automatically added to user's and root's
+ - `cz.ssh.keys`
+
+ ssh keys that are automatically added to user's and root's
 `~/.ssh/authorized_keys` file.
 
