@@ -3,13 +3,11 @@
 exec 3>&1 4>&2 1>& >(tee /tmp/custom-ocs-2.log) 2>&1
 #set -x
 
-# this script is downloaded by clonezilla live and executed.
+# This script is downloaded by clonezilla live and executed as "user".
 #
 # CAS 2010-02-26
 #
 # based on example seen at:
-# http://clonezilla.org/clonezilla-live/doc/fine-print.php?path=./07_Customized_script_with_PXE/00_customized_script_with_PXE.doc
-#
 # http://clonezilla.org/clonezilla-live/doc/07_Customized_script_with_PXE/00_customized_script_with_PXE.doc
 
 # set LANG
@@ -88,7 +86,7 @@ sed -i -e 's/^/#/' /home/user/.bash_logout
 sed -i -e 's/^clear/#&/' /home/user/.bash_profile
 
 # clear motd
-sudo echo > /etc/motd
+echo | sudo tee /etc/motd
 
 if [ -n "$(type -p mount.cifs)" ] ; then
   echo -n "Login [$SMBUSER]: "
@@ -96,7 +94,9 @@ if [ -n "$(type -p mount.cifs)" ] ; then
   [ -z "$user" ] && user="$SMBUSER"
   read -n "Password: " pass
 
-  sudo mount.cifs "\\\\$SMBHOST\\$SMBSHARE" /home/partimag -o user="$user",pass="$SMBPASS"
+  if [ -n "$user" ] && [ -n "$pass" ] ; then
+    sudo mount.cifs "\\\\$SMBHOST\\$SMBSHARE" /home/partimag -o user="$user",pass="$SMBPASS"
+  fi
 fi
 
 [ -d "/opt/drbl/" ] && export PATH="/opt/drbl/sbin:/opt/drbl/bin:$PATH"
